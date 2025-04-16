@@ -71,13 +71,29 @@
     </div>
 
     <script>
-        // 模拟座位分配数据
-        let seatingData = {
-            张三: "A1",
-            李四: "B2",
-            王五: "C3",
-            赵六: "D4"
-        };
+        // 初始化座位分配数据
+        let seatingData = {};
+
+        // 从 localStorage 加载数据
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('seatingData');
+            if (savedData) {
+                seatingData = JSON.parse(savedData);
+            } else {
+                seatingData = {
+                    张三: "A1",
+                    李四: "B2",
+                    王五: "C3",
+                    赵六: "D4"
+                };
+                saveToLocalStorage();
+            }
+        }
+
+        // 将数据保存到 localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('seatingData', JSON.stringify(seatingData));
+        }
 
         function findSeat() {
             const name = document.getElementById('nameInput').value.trim();
@@ -107,14 +123,19 @@
         }
 
         function parseCSV(csvData) {
+            console.log("原始CSV数据:", csvData); // 添加调试信息
             const lines = csvData.split('\n');
             for (let i = 1; i < lines.length; i++) { // Skip header line
                 const [name, seat] = lines[i].split(',');
                 if (name && seat) {
                     seatingData[name.trim()] = seat.trim();
+                    console.log(`已添加: ${name.trim()} -> ${seat.trim()}`); // 添加调试信息
+                } else {
+                    console.log(`跳过无效行: ${lines[i]}`); // 添加调试信息
                 }
             }
-            console.log(seatingData); // 添加调试信息
+            console.log("更新后的座位数据:", seatingData); // 添加调试信息
+            saveToLocalStorage(); // 保存到 localStorage
             alert('CSV文件已成功加载并更新座位信息');
         }
 
@@ -124,6 +145,7 @@
 
             if (newName && newSeat) {
                 seatingData[newName] = newSeat;
+                saveToLocalStorage(); // 保存到 localStorage
                 alert(`已成功添加 ${newName} 的座位号为 ${newSeat}`);
                 document.getElementById('newName').value = '';
                 document.getElementById('newSeat').value = '';
@@ -140,8 +162,14 @@
             }
         }
 
-        // 页面加载时检查管理员角色
-        window.onload = checkAdminRole;
+        // 页面加载时检查管理员角色并加载数据
+        window.onload = function() {
+            checkAdminRole();
+            loadFromLocalStorage();
+        };
     </script>
 </body>
 </html>
+
+
+
