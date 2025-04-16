@@ -71,31 +71,20 @@
     </div>
 
     <script>
-        // 初始化座位分配数据
+        // 初始座位分配数据
+        const initialSeatingData = {
+            "张三": "A1",
+            "李四": "B2",
+            "王五": "C3",
+            "赵六": "D4"
+        };
+
         let seatingData = {};
 
-        // 从 localStorage 加载数据
-        function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('seatingData');
-            if (savedData) {
-                seatingData = JSON.parse(savedData);
-                console.log("从 localStorage 加载的数据:", seatingData); // 添加调试信息
-            } else {
-                seatingData = {
-                    张三: "A1",
-                    李四: "B2",
-                    王五: "C3",
-                    赵六: "D4"
-                };
-                saveToLocalStorage();
-                console.log("初始化默认数据:", seatingData); // 添加调试信息
-            }
-        }
-
-        // 将数据保存到 localStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('seatingData', JSON.stringify(seatingData));
-            console.log("保存到 localStorage 的数据:", seatingData); // 添加调试信息
+        // 初始化座位数据
+        function initializeSeatingData() {
+            seatingData = { ...initialSeatingData };
+            console.log("初始化座位数据:", seatingData); // 添加调试信息
         }
 
         function findSeat() {
@@ -138,7 +127,6 @@
                 }
             }
             console.log("更新后的座位数据:", seatingData); // 添加调试信息
-            saveToLocalStorage(); // 保存到 localStorage
             alert('CSV文件已成功加载并更新座位信息');
         }
 
@@ -148,7 +136,7 @@
 
             if (newName && newSeat) {
                 seatingData[newName] = newSeat;
-                saveToLocalStorage(); // 保存到 localStorage
+                console.log("更新后的座位数据:", seatingData); // 添加调试信息
                 alert(`已成功添加 ${newName} 的座位号为 ${newSeat}`);
                 document.getElementById('newName').value = '';
                 document.getElementById('newSeat').value = '';
@@ -165,10 +153,10 @@
             }
         }
 
-        // 页面加载时检查管理员角色并加载数据
+        // 页面加载时检查管理员角色并初始化数据
         window.onload = function() {
             checkAdminRole();
-            loadFromLocalStorage();
+            initializeSeatingData();
         };
     </script>
 </body>
